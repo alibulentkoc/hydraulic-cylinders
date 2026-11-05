@@ -496,7 +496,7 @@ function frame(t){
   else ring.style.display='none';
   // zoom
   let target=[0,0,1100,440];
-  if(($('zoom').checked||quiz.active)&&selected){const b=SEALS[selected].box, ox=SEALS[selected].moves?dx:0, cx=b[0]+ox+b[2]/2, cy=b[1]+b[3]/2, w=Math.max(260,b[2]*3.2), h=w*0.4;
+  if(($('zoom').checked||quiz.active)&&selected){const b=SEALS[selected].box, ox=SEALS[selected].moves?dx:0, cx=b[0]+ox+b[2]/2, cy=b[1]+b[3]/2, w=Math.min(1100,Math.max(quiz.active?600:480,b[2]*4,b[3]*1.6/0.4)), h=w*0.4;
     target=[cx-w/2,Math.max(-20,cy-h/2),w,h];}
   for(let k=0;k<4;k++) vb[k]+=(target[k]-vb[k])*0.12;
   $('cyl').setAttribute('viewBox',vb.map(v=>v.toFixed(1)).join(' '));
@@ -681,7 +681,7 @@ window.render3D=function(st){
     if(p.age>p.life){scene.remove(p.m); p.m.geometry.dispose(); particles.splice(i,1);}}
   // camera: zoom follows the selected seal
   let tgt=new THREE.Vector3(0,0,0), tdist=cam.tdist;
-  if(st.zoom&&st.selected){const s=SEAL_AT[st.selected]; tgt=W(s[0],s[1],PHL,s[2]?dA:0); tdist=Math.min(cam.tdist,40);}
+  if(st.zoom&&st.selected){const s=SEAL_AT[st.selected]; tgt=W(s[0],s[1],PHL,s[2]?dA:0); tdist=Math.min(cam.tdist,85);}
   cam.tx+=(tgt.x-cam.tx)*0.1; cam.ty+=(tgt.y-cam.ty)*0.1; cam.tz+=(tgt.z-cam.tz)*0.1;
   cam.az+=(cam.taz-cam.az)*0.12; cam.el+=(cam.tel-cam.el)*0.12; cam.dist+=(tdist-cam.dist)*0.12;
   camera.position.set(cam.tx+cam.dist*Math.cos(cam.el)*Math.sin(cam.az),cam.ty+cam.dist*Math.sin(cam.el),cam.tz+cam.dist*Math.cos(cam.el)*Math.cos(cam.az));
