@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hydraulic cylinder seals: static and dynamic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6E9EC; --panel:#F6F7F8; --ink:#1C232B; --muted:#56616D; --line:#C5CCD3;
+  --steel:#A5AEB7; --steel-dark:#66717C; --steel-light:#D3D8DD; --hatch:#7D8893; --rod:#C9D0D6; --rod-hi:#F1F4F6;
+  --hp:#C62E2E; --lp:#2563A8; --dyn:#D9822B; --stat:#2F8F5B; --accent:#F2C230; --dirt:#6B4E22; --oilfilm:#C99A2E;
+  --sans:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme: light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151A1F; --panel:#1E252C; --ink:#E3E8EC; --muted:#9BA7B3; --line:#34404B;
+    --steel:#5B6772; --steel-dark:#3B4550; --steel-light:#7A8792; --hatch:#45515C; --rod:#8E99A3; --rod-hi:#C3CBD2;
+    --hp:#E25858; --lp:#5C98E2; --dyn:#F0A04B; --stat:#55C08A; --accent:#F2C230; --dirt:#C9A46B; --oilfilm:#D9AE4A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151A1F; --panel:#1E252C; --ink:#E3E8EC; --muted:#9BA7B3; --line:#34404B;
+  --steel:#5B6772; --steel-dark:#3B4550; --steel-light:#7A8792; --hatch:#45515C; --rod:#8E99A3; --rod-hi:#C3CBD2;
+  --hp:#E25858; --lp:#5C98E2; --dyn:#F0A04B; --stat:#55C08A; --accent:#F2C230; --dirt:#C9A46B; --oilfilm:#D9AE4A;
+  color-scheme: dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding:28px 20px 60px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 32px;margin-bottom:20px;border-bottom:2px solid var(--ink);padding-bottom:14px}
+h1{font-family:var(--cond);font-weight:600;font-size:clamp(2rem,4.6vw,3.2rem);line-height:1;margin:0}
+.rule{font-family:var(--cond);font-size:clamp(1.1rem,2.1vw,1.45rem);font-weight:500;margin:0;max-width:34ch}
+.rule .d{color:var(--dyn)} .rule .s{color:var(--stat)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:22px;align-items:start}
+@media (max-width:960px){.grid{grid-template-columns:minmax(0,1fr)}}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px}
+svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 4px 2px;font-size:.88rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 4px 0}
+.btn{border:1px solid var(--steel-dark);background:var(--bg);color:var(--ink);font:500 .9rem var(--sans);padding:6px 11px;border-radius:4px;cursor:pointer}
+.btn:hover{background:var(--steel-light)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.toolbar label{font-size:.9rem;display:flex;align-items:center;gap:6px}
+input[type=range]{accent-color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+aside{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.card h2{font-family:var(--cond);font-weight:600;font-size:1.25rem;margin:0 0 8px}
+.seallist{display:flex;flex-wrap:wrap;gap:6px}
+.seallist button{border:1px solid var(--steel-dark);background:var(--bg);color:var(--ink);font:500 .85rem var(--sans);padding:5px 9px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.seallist button i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.seallist button[aria-pressed="true"]{outline:2px solid var(--ink)}
+.badge{display:inline-block;font:600 .8rem var(--sans);padding:2px 8px;border-radius:20px;color:#fff;margin-left:6px;vertical-align:2px}
+.badge.dyn{background:var(--dyn)} .badge.stat{background:var(--stat)}
+#info h3{margin:0 0 6px;font-size:1.1rem}
+#info dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.92rem}
+#info dt{color:var(--muted)} #info dd{margin:0}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;margin:6px 0}
+.check input{margin-top:4px}
+.symptoms{font-size:.9rem;margin:8px 0 0;padding-left:18px}
+.symptoms li{margin:3px 0}
+.quizq{font-size:1rem;margin:6px 0}
+.quizbtns{display:flex;gap:8px;margin:8px 0}
+.quizbtns .btn{flex:1}
+.fb{font-size:.92rem;min-height:2.6em}
+.howto{margin:0 0 8px;padding-left:20px;font-size:.92rem}.howto li{margin:3px 0}
+.row3{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.score{font:600 1rem var(--cond);margin-left:auto}
+.quizbtns .btn[disabled]{opacity:.45;cursor:default}
+.seallist.locked{opacity:.4;pointer-events:none}
+.fb.ok{color:var(--stat)} .fb.no{color:var(--hp)}
+section.learn{margin-top:28px}
+section.learn h2{font-family:var(--cond);font-weight:600;font-size:1.8rem;margin:0 0 8px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:16px}
+.two .card p{margin:0}
+.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:760px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+
+.viewtabs{display:flex;gap:0;border:1px solid var(--steel-dark);border-radius:4px;overflow:hidden;width:max-content;margin:0 0 10px}
+.viewtabs button{border:0;background:transparent;color:var(--ink);font:500 .9rem var(--sans);padding:7px 14px;cursor:pointer}
+.viewtabs button+button{border-left:1px solid var(--steel-dark)}
+.viewtabs button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+:root{--scene:#EEF1F3}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--scene:#20272E}}
+:root[data-theme="dark"]{--scene:#20272E}
+.viewer{position:relative;width:100%;aspect-ratio:2.1/1;min-height:300px;border-radius:4px;overflow:hidden;background:var(--scene);touch-action:none;cursor:grab}
+.viewer:active{cursor:grabbing}
+.viewer canvas{display:block;width:100%;height:100%;outline:none}
+.viewer canvas:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.views3{position:absolute;top:8px;left:8px;display:flex;flex-wrap:wrap;gap:4px;z-index:3}
+.views3 button{border:1px solid var(--steel-dark);background:var(--panel);color:var(--ink);font:500 .82rem var(--sans);padding:4px 9px;border-radius:3px;cursor:pointer}
+.views3 button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.hint3{position:absolute;bottom:6px;right:10px;font-size:.78rem;color:var(--muted);z-index:3;pointer-events:none}
+.lab3{position:absolute;left:0;top:0;font:600 13px var(--cond);color:#fff;padding:1px 6px;border-radius:3px;pointer-events:none;white-space:nowrap;z-index:2}
+.lab3.dyn{background:var(--dyn)} .lab3.stat{background:var(--stat)}
+.lab3.part{background:color-mix(in srgb,var(--panel) 85%,transparent);color:var(--ink)}
+/* svg */
+.hatch-bg{fill:var(--steel-light)} .hatch-line{stroke:var(--hatch);stroke-width:1.3}
+.edge{fill:none;stroke:var(--steel-dark);stroke-width:1.5}
+.tierod{fill:var(--steel)} .nut{fill:var(--steel-dark)}
+.rod{fill:url(#rodgrad);stroke:var(--steel-dark);stroke-width:1.2}
+.thread{stroke:var(--steel-dark);stroke-width:1}
+.rodmark{stroke:var(--steel-dark);stroke-width:1;opacity:.45}
+.boretick{stroke:var(--steel-dark);stroke-width:1.2}
+.groove{fill:var(--steel-dark)}
+.chamber-hp{fill:var(--hp);opacity:.55} .chamber-lp{fill:var(--lp);opacity:.45}
+.pipe-wall{stroke:var(--steel-dark);stroke-width:22;fill:none;stroke-linejoin:round}
+.pipe-hp{stroke:var(--hp);stroke-width:14;fill:none;stroke-linejoin:round}
+.pipe-lp{stroke:var(--lp);stroke-width:14;fill:none;stroke-linejoin:round}
+.flow{stroke:#fff;stroke-opacity:.75;stroke-width:3;fill:none;stroke-dasharray:5 12;stroke-linecap:round;stroke-linejoin:round}
+.seal{cursor:pointer}
+.seal .s-dyn{fill:var(--dyn);stroke:#5a2f00;stroke-width:.8}
+.seal .s-stat{fill:var(--stat);stroke:#0f3d24;stroke-width:.8}
+.seal:hover .s-dyn,.seal:hover .s-stat{stroke-width:2}
+.seal.missing .s-dyn{fill:none;stroke:var(--dyn);stroke-dasharray:2 2}
+.seal.worn .s-dyn,.seal.worn .s-stat{fill:var(--muted)}
+.selring{fill:none;stroke:var(--accent);stroke-width:3;pointer-events:none}
+.pulse{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{stroke-opacity:.2}}
+.lbl{font:600 14px var(--cond);fill:var(--ink)} .lbl-s{font:500 12px var(--sans);fill:var(--muted)}
+.lbl-bg{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.leader{stroke:var(--muted);stroke-width:1;fill:none}
+.nolabels .lab{display:none}
+.drop{fill:var(--oilfilm)} .leakp{fill:var(--hp)} .dirt{fill:var(--dirt)}
+@media (prefers-reduced-motion: reduce){.pulse{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+<header>
+  <p style="margin:0 0 6px"><a href="index.html" style="color:var(--ink);font-weight:600">← All cylinder types</a></p>
+  <h1>Seals in a hydraulic cylinder</h1>
+  <p class="rule">A seal is <span class="d">dynamic</span> when the surfaces it seals between slide past each other, and <span class="s">static</span> when they don’t.</p>
+</header>
+
+<div class="grid">
+<div>
+  <div class="fig">
+    <div class="viewtabs" role="group" aria-label="View"><button data-mode="2d" aria-pressed="true">Section view</button><button data-mode="3d" aria-pressed="false">Perspective view</button></div>
+    <div class="viewer" id="v3d" hidden>
+      <div class="views3" role="group" aria-label="Camera"><button data-v3="persp" aria-pressed="true">Perspective</button><button data-v3="front" aria-pressed="false">Front</button><button data-v3="top" aria-pressed="false">Top</button><button data-v3="end" aria-pressed="false">Rod end</button></div>
+      <div class="hint3">Drag to rotate, scroll or pinch to zoom, click a seal</div>
+    </div>
+    <svg id="cyl" viewBox="0 0 1100 440" role="img" aria-label="Cutaway of a double-acting hydraulic cylinder showing static and dynamic seals">
+      <defs>
+        <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="9" height="9" class="hatch-bg"/><line x1="0" y1="0" x2="0" y2="9" class="hatch-line"/>
+        </pattern>
+        <linearGradient id="rodgrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" style="stop-color:var(--rod)"/><stop offset=".35" style="stop-color:var(--rod-hi)"/><stop offset="1" style="stop-color:var(--steel)"/>
+        </linearGradient>
+      </defs>
+
+      <!-- tie rods -->
+      <rect class="tierod" x="315" y="72" width="690" height="8"/><rect class="tierod" x="315" y="360" width="690" height="8"/>
+      <rect class="nut" x="303" y="66" width="12" height="20"/><rect class="nut" x="1005" y="66" width="12" height="20"/>
+      <rect class="nut" x="303" y="354" width="12" height="20"/><rect class="nut" x="1005" y="354" width="12" height="20"/>
+      <!-- ports and pipes -->
+      <path class="pipe-wall" d="M410,0 V150 H446"/><path id="pipeA" class="pipe-lp" d="M410,0 V150 H446"/><path id="flowA" class="flow" d="M410,0 V150 H446"/>
+      <path class="pipe-wall" d="M955,0 V150 H884"/><path id="pipeB" class="pipe-hp" d="M955,0 V150 H884"/><path id="flowB" class="flow" d="M955,0 V150 H884"/>
+
+      <!-- chambers -->
+      <rect id="chRod" class="chamber-lp" x="445" y="110" width="365" height="220"/>
+      <rect id="chCap" class="chamber-hp" x="880" y="110" width="5" height="220"/>
+
+      <!-- barrel walls -->
+      <rect x="430" y="96" width="470" height="14" fill="url(#hatch)"/><rect x="430" y="96" width="470" height="14" class="edge"/>
+      <rect x="430" y="330" width="470" height="14" fill="url(#hatch)"/><rect x="430" y="330" width="470" height="14" class="edge"/>
+      <g id="boreTicks"></g>
+
+
+      <!-- head (rod end) -->
+      <path fill="url(#hatch)" d="M330,84 H430 V110 H445 V188 H330 Z"/><path class="edge" d="M330,84 H430 V110 H445 V188 H330 Z"/>
+      <path fill="url(#hatch)" d="M330,252 H445 V330 H430 V356 H330 Z"/><path class="edge" d="M330,252 H445 V330 H430 V356 H330 Z"/>
+      <!-- cap (blind end) -->
+      <path fill="url(#hatch)" d="M885,110 H900 V84 H1000 V356 H900 V330 H885 Z"/><path class="edge" d="M885,110 H900 V84 H1000 V356 H900 V330 H885 Z"/>
+      <!-- port passages drawn over the hatch -->
+      <path class="pipe-lp" id="passA" d="M410,84 V150 H446" style="stroke-width:12"/>
+      <path class="pipe-hp" id="passB" d="M955,84 V150 H884" style="stroke-width:12"/>
+
+      <!-- grooves in head bore -->
+      <g class="groove">
+        <rect x="331" y="176" width="13" height="12"/><rect x="331" y="252" width="13" height="12"/>
+        <rect x="354" y="176" width="17" height="12"/><rect x="354" y="252" width="17" height="12"/>
+        <rect x="380" y="174" width="32" height="14"/><rect x="380" y="252" width="32" height="14"/>
+        <rect x="433" y="106" width="9" height="8"/><rect x="433" y="326" width="9" height="8"/>
+        <rect x="888" y="106" width="9" height="8"/><rect x="888" y="326" width="9" height="8"/>
+      </g>
+
+      <!-- moving parts: rod, piston, piston seals (drawn at fully retracted position) -->
+      <g id="mover">
+        <rect class="rod" x="260" y="190" width="590" height="60"/>
+        <g id="threads"></g>
+        <g id="rodMarks"></g>
+        <rect id="oilFilm" x="260" y="186" width="0" height="4" style="fill:var(--oilfilm)" opacity=".8"/>
+        <rect x="810" y="112" width="70" height="216" fill="url(#hatch)"/><rect x="810" y="112" width="70" height="216" class="edge"/>
+        <rect x="810" y="190" width="70" height="60" class="rod" opacity=".9"/>
+        <g class="groove"><rect x="821" y="110" width="15" height="8"/><rect x="853" y="110" width="15" height="8"/><rect x="821" y="322" width="15" height="8"/><rect x="853" y="322" width="15" height="8"/>
+          <rect x="811" y="186" width="10" height="5"/><rect x="811" y="249" width="10" height="5"/></g>
+        <g class="seal" data-id="piston" tabindex="0" role="button" aria-label="Piston seals, dynamic">
+          <rect class="s-dyn" x="822" y="110" width="13" height="7" rx="2"/><rect class="s-dyn" x="854" y="110" width="13" height="7" rx="2"/>
+          <rect class="s-dyn" x="822" y="323" width="13" height="7" rx="2"/><rect class="s-dyn" x="854" y="323" width="13" height="7" rx="2"/>
+        </g>
+        <g class="seal" data-id="pistonRod" tabindex="0" role="button" aria-label="Piston to rod O-ring, static">
+          <circle class="s-stat" cx="816" cy="189" r="3.6"/><circle class="s-stat" cx="816" cy="251" r="3.6"/>
+        </g>
+        <g class="lab">
+          <path class="leader" d="M828,330 L800,402 M860,330 L812,402"/>
+          <text class="lbl lbl-bg" x="806" y="418" text-anchor="middle">Piston seals (dynamic)</text>
+          <path class="leader" d="M816,190 L760,150"/>
+          <text class="lbl lbl-bg" x="756" y="146" text-anchor="end">Piston–rod O-ring (static)</text>
+          <text class="lbl lbl-bg" x="845" y="292" text-anchor="middle">Piston</text>
+          <text class="lbl lbl-bg" x="610" y="226" text-anchor="middle">Rod</text>
+        </g>
+        <g id="dirtLocal"></g>
+      </g>
+
+      <!-- fixed seals -->
+      <g class="seal" data-id="wiper" tabindex="0" role="button" aria-label="Rod wiper, dynamic">
+        <path class="s-dyn" d="M332,177 H343 V187 L333,190 Z"/><path class="s-dyn" d="M332,263 H343 V253 L333,250 Z"/>
+      </g>
+      <g class="seal" data-id="rodseal" tabindex="0" role="button" aria-label="Rod seal, dynamic">
+        <path class="s-dyn" d="M355,177 H370 V190 H366 V182 H359 V190 H355 Z"/><path class="s-dyn" d="M355,263 H370 V250 H366 V258 H359 V250 H355 Z"/>
+      </g>
+      <g class="seal" data-id="packing" tabindex="0" role="button" aria-label="Rod packing, dynamic">
+        <path class="s-dyn" d="M381,175 L389,175 L393,182 L389,190 L381,190 L385,182 Z M391,175 L399,175 L403,182 L399,190 L391,190 L395,182 Z M401,175 L409,175 L413,182 L409,190 L401,190 L405,182 Z"/>
+        <path class="s-dyn" d="M381,265 L389,265 L393,258 L389,250 L381,250 L385,258 Z M391,265 L399,265 L403,258 L399,250 L391,250 L395,258 Z M401,265 L409,265 L413,258 L409,250 L401,250 L405,258 Z"/>
+      </g>
+      <g class="seal" data-id="oringHead" tabindex="0" role="button" aria-label="Head O-ring, static">
+        <circle class="s-stat" cx="437.5" cy="110" r="4.4"/><circle class="s-stat" cx="437.5" cy="330" r="4.4"/>
+      </g>
+      <g class="seal" data-id="oringCap" tabindex="0" role="button" aria-label="Cap O-ring, static">
+        <circle class="s-stat" cx="892.5" cy="110" r="4.4"/><circle class="s-stat" cx="892.5" cy="330" r="4.4"/>
+      </g>
+
+      <!-- fixed labels -->
+      <g class="lab">
+        <path class="leader" d="M362,178 L250,118"/><text class="lbl lbl-bg" x="246" y="114" text-anchor="end">Rod seal (dynamic)</text>
+        <path class="leader" d="M336,262 L250,300"/><text class="lbl lbl-bg" x="246" y="304" text-anchor="end">Rod wiper (dynamic)</text>
+        <path class="leader" d="M398,264 L250,350"/><text class="lbl lbl-bg" x="246" y="354" text-anchor="end">Rod packing (dynamic)</text>
+        <path class="leader" d="M440,108 L560,46 M890,108 L700,46"/><text class="lbl lbl-bg" x="630" y="40" text-anchor="middle">O-rings (static)</text>
+        <text class="lbl lbl-bg" x="380" y="404" text-anchor="middle">Head (rod end)</text>
+        <text class="lbl lbl-bg" x="950" y="404" text-anchor="middle">Cap (blind end)</text>
+        <text class="lbl lbl-bg" x="660" y="392" text-anchor="middle">Barrel</text>
+        <text class="lbl lbl-bg" x="425" y="22" id="portALbl">Port A</text>
+        <text class="lbl lbl-bg" x="970" y="22" id="portBLbl">Port B</text>
+      </g>
+
+      <rect id="selRing" class="selring pulse" x="0" y="0" width="0" height="0" rx="8" style="display:none"/>
+      <g id="fx"></g>
+    </svg>
+    <div class="legend" aria-hidden="true">
+      <span><i style="background:var(--dyn)"></i>Dynamic seal</span>
+      <span><i style="background:var(--stat)"></i>Static seal</span>
+      <span><i style="background:var(--hp)"></i>Pressure oil</span>
+      <span><i style="background:var(--lp)"></i>Return oil</span>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="play" aria-pressed="true">Pause</button>
+      <button class="btn" id="dirBtn">Reverse now</button>
+      <label>Position <input type="range" id="pos" min="0" max="1" step="0.001" value="0" aria-label="Piston position"></label>
+      <label>Stroke time
+        <select id="spd" class="btn" style="padding:4px"><option value="2">2 s</option><option value="4" selected>4 s</option><option value="8">8 s</option></select>
+      </label>
+      <label><input type="checkbox" id="labels" checked> Labels</label>
+      <label><input type="checkbox" id="zoom"> Zoom to selected seal</label>
+    </div>
+  </div>
+</div>
+
+<aside>
+  <div class="card">
+    <h2>Pick a seal</h2>
+    <div class="seallist" id="sealList"></div>
+  </div>
+  <div class="card" id="info" aria-live="polite"></div>
+  <div class="card">
+    <h2>Make a seal fail</h2>
+    <label class="check"><input type="checkbox" data-fail="piston"> Worn piston seals</label>
+    <label class="check"><input type="checkbox" data-fail="rodseal"> Worn rod seal</label>
+    <label class="check"><input type="checkbox" data-fail="wiper"> Missing rod wiper</label>
+    <label class="check"><input type="checkbox" data-fail="oringHead"> Failed head O-ring</label>
+    <ul class="symptoms" id="symptoms"></ul>
+  </div>
+  <div class="card">
+    <h2>Quiz: static or dynamic?</h2>
+    <ol class="howto" id="quizHow">
+      <li>Press <b>Start quiz</b>. The labels disappear and the drawing zooms in on one seal, outlined in flashing yellow.</li>
+      <li>Look at the two parts the seal touches. Do they slide past each other?</li>
+      <li>Choose <b>Static</b> or <b>Dynamic</b>, read the explanation, then press <b>Next question</b>. There are 5 questions.</li>
+    </ol>
+    <p class="quizq" id="quizQ" hidden></p>
+    <div class="quizbtns" id="quizBtns" hidden><button class="btn" data-ans="stat">Static</button><button class="btn" data-ans="dyn">Dynamic</button></div>
+    <p class="fb" id="quizFb" aria-live="polite"></p>
+    <div class="row3"><button class="btn" id="quizNext" hidden>Next question</button><button class="btn" id="quizStart">Start quiz</button><button class="btn" id="quizStop" hidden>Stop quiz</button><span id="quizScore" class="score"></span></div>
+  </div>
+</aside>
+</div>
+
+<section class="learn">
+  <h2>Static and dynamic seals</h2>
+  <div class="two">
+    <div class="card"><h2 style="color:var(--stat)">Static seal</h2><p>Seals a joint between two parts that do not move relative to each other, such as the barrel and the end caps. It is squeezed once when the cylinder is assembled and then just holds. O-rings and gaskets are typical.</p></div>
+    <div class="card"><h2 style="color:var(--dyn)">Dynamic seal</h2><p>Seals between surfaces that slide (or rotate) past each other, such as the rod through the head or the piston in the bore. It must hold pressure while moving, resist wear and friction, and leave only a thin film of oil. U-cups, vee packings, piston rings and wipers are typical.</p></div>
+    <div class="card"><h2>The test</h2><p>Ask whether the two surfaces move <em>relative to each other</em>, not whether the seal moves. The O-ring between the piston and the rod travels the full stroke, yet it is static: the piston and rod move together.</p></div>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Seal</th><th>Type</th><th>Seals between</th><th>Job</th><th>If it fails</th></tr></thead>
+    <tbody id="sealTable"></tbody>
+  </table></div>
+</section>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const SEALS={
+  wiper:{name:'Rod wiper',type:'dyn',between:'The rod and the head (outer end)',motion:'The rod slides through it every stroke.',job:'Scrapes dirt, dust and water off the rod as it retracts, so they don’t reach the rod seal. It is not a pressure seal.',fail:'Grit is carried inside, scoring the rod and ruining the rod seal and packing.',box:[322,168,32,104]},
+  rodseal:{name:'Rod seal',type:'dyn',between:'The moving rod and the fixed head',motion:'The rod slides through it every stroke.',job:'Keeps pressure oil in the rod-end chamber from leaking out along the rod. It must seal while the rod moves and leave only a thin oil film on the rod.',fail:'External leak: oil drips from the rod at the head, and dirt sticks to the oily rod.',box:[346,168,32,104]},
+  packing:{name:'Rod packing',type:'dyn',between:'The moving rod and the fixed head',motion:'The rod slides through it every stroke.',job:'A stack of vee rings behind the rod seal that backs it up and guides the rod. Pressure squeezes the vee lips harder against the rod.',fail:'Rod leaks, especially at high pressure, and the rod can wobble in the head.',box:[374,166,46,108]},
+  oringHead:{name:'Head O-ring',type:'stat',between:'The barrel and the head',motion:'None: the barrel and head are bolted together by the tie rods.',job:'Seals the joint where the barrel fits onto the head, so pressure oil can’t escape between them.',fail:'External weep or leak at the barrel-to-head joint, often after the tie rods loosen.',box:[424,96,28,248]},
+  oringCap:{name:'Cap O-ring',type:'stat',between:'The barrel and the cap',motion:'None: the barrel and cap are bolted together by the tie rods.',job:'Seals the joint where the barrel fits onto the cap at the blind end.',fail:'External weep or leak at the barrel-to-cap joint.',box:[879,96,28,248]},
+  piston:{name:'Piston seals',type:'dyn',between:'The moving piston and the fixed barrel bore',motion:'The piston slides along the bore for the full stroke.',job:'Keep pressure oil on one side of the piston from slipping past to the other side, so the piston is pushed instead of oil leaking through.',fail:'Internal leak (bypass): no oil drips outside, but the cylinder is slow, gets hot and drifts under load.',box:[814,100,62,240],moves:true},
+  pistonRod:{name:'Piston–rod O-ring',type:'stat',between:'The piston and the rod',motion:'None: the piston is fixed to the rod, so they move together even though the seal travels the full stroke.',job:'Stops oil leaking from one chamber to the other through the joint between the piston and the rod.',fail:'Internal leak through the piston joint; looks just like worn piston seals.',box:[804,178,24,84],moves:true}
+};
+const ORDER=['wiper','rodseal','packing','oringHead','oringCap','piston','pistonRod'];
+
+/* ---------- static decoration ---------- */
+(function(){
+  let h=''; for(let x=262;x<300;x+=5) h+=`<line class="thread" x1="${x}" y1="190" x2="${x+3}" y2="250"/>`; $('threads').innerHTML=h;
+  h=''; for(let x=310;x<810;x+=22) h+=`<line class="rodmark" x1="${x}" y1="193" x2="${x}" y2="247"/>`; $('rodMarks').innerHTML=h;
+  h=''; for(let x=455;x<885;x+=24) h+=`<line class="boretick" x1="${x}" y1="110" x2="${x}" y2="104"/><line class="boretick" x1="${x}" y1="330" x2="${x}" y2="336"/>`; $('boreTicks').innerHTML=h;
+  // seal list + table
+  $('sealList').innerHTML=ORDER.map(k=>`<button data-sel="${k}" aria-pressed="false"><i style="background:var(--${SEALS[k].type})"></i>${SEALS[k].name}</button>`).join('');
+  $('sealTable').innerHTML=ORDER.map(k=>{const s=SEALS[k]; return `<tr><td>${s.name}</td><td><span class="badge ${s.type}">${s.type==='dyn'?'Dynamic':'Static'}</span></td><td>${s.between}</td><td>${s.job}</td><td>${s.fail}</td></tr>`;}).join('');
+})();
+
+/* ---------- state ---------- */
+let pos=0, dir=1, playing=!matchMedia('(prefers-reduced-motion: reduce)').matches, selected=null, hold=0;
+const fail={piston:false,rodseal:false,wiper:false,oringHead:false};
+const STROKE=330;
+
+/* ---------- selection and info ---------- */
+function select(k){
+  selected=k;
+  document.querySelectorAll('[data-sel]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sel===k));
+  const s=SEALS[k], I=$('info');
+  if(quiz.active){return;}
+  I.innerHTML=`<h3>${s.name}<span class="badge ${s.type}">${s.type==='dyn'?'Dynamic':'Static'}</span></h3>
+  <dl><dt>Seals between</dt><dd>${s.between}</dd><dt>Relative motion</dt><dd>${s.motion}</dd><dt>Job</dt><dd>${s.job}</dd><dt>If it fails</dt><dd>${s.fail}</dd></dl>`;
+}
+function showIntro(){
+  $('info').innerHTML='<h2>How to use this</h2><p style="margin:0;font-size:.95rem">Click a seal in the drawing or in the list to see what it seals and why it is static or dynamic. Watch the rod markings slide past the rod seals and the piston seals slide past the bore ticks: that sliding is what makes a seal dynamic. Pause and drag the position slider to move the piston by hand.</p>';
+}
+showIntro();
+document.querySelectorAll('.seal').forEach(g=>{
+  g.addEventListener('click',()=>{quiz.active?null:select(g.dataset.id);});
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault(); if(!quiz.active) select(g.dataset.id);}});
+});
+$('sealList').addEventListener('click',e=>{const b=e.target.closest('[data-sel]'); if(b&&!quiz.active) select(b.dataset.sel);});
+
+/* ---------- failures ---------- */
+const SYMPT={
+  piston:'Worn piston seals: oil slips past the piston from the pressure side to the return side. Nothing drips outside, but the cylinder is slower, runs hot and creeps when holding a load.',
+  rodseal:'Worn rod seal: oil escapes along the rod and drips from the head, and the oily rod attracts dirt.',
+  wiper:'Missing wiper: dirt on the extended rod is pulled inside on every retraction, where it scores the rod and destroys the rod seal.',
+  oringHead:'Failed head O-ring: oil weeps from the barrel-to-head joint even when the cylinder is not moving.'
+};
+document.querySelectorAll('[data-fail]').forEach(c=>c.addEventListener('change',()=>{
+  fail[c.dataset.fail]=c.checked;
+  document.querySelector(`.seal[data-id="${c.dataset.fail}"]`).classList.toggle(c.dataset.fail==='wiper'?'missing':'worn',c.checked);
+  $('symptoms').innerHTML=Object.keys(fail).filter(k=>fail[k]).map(k=>`<li>${SYMPT[k]}</li>`).join('');
+}));
+
+/* ---------- controls ---------- */
+const syncPlay=()=>{$('play').textContent=playing?'Pause':'Play'; $('play').setAttribute('aria-pressed',playing);};
+syncPlay();
+$('play').addEventListener('click',()=>{playing=!playing; syncPlay();});
+$('dirBtn').addEventListener('click',()=>{dir*=-1;});
+$('pos').addEventListener('input',e=>{playing=false; syncPlay(); const np=+e.target.value; if(np!==pos) dir=np>pos?1:-1; pos=np;});
+$('labels').addEventListener('change',e=>{const off=!e.target.checked||quiz.active; $('cyl').classList.toggle('nolabels',off); $('v3d').classList.toggle('nolabels',off);});
+
+/* ---------- quiz ---------- */
+const quiz={active:false,queue:[],i:0,score:0,cur:null,answered:false};
+function quizUI(on){
+  quiz.active=on;
+  ['cyl','v3d'].forEach(id=>$(id).classList.toggle('nolabels',on||!$('labels').checked));
+  $('quizHow').hidden=on; $('quizQ').hidden=!on; $('quizBtns').hidden=!on; $('quizStop').hidden=!on; $('quizStart').hidden=on;
+  $('sealList').classList.toggle('locked',on);
+}
+$('quizStart').addEventListener('click',()=>{
+  quiz.queue=[...ORDER].sort(()=>Math.random()-0.5).slice(0,5); quiz.i=0; quiz.score=0;
+  quizUI(true);
+  $('info').innerHTML='<h2>Quiz in progress</h2><p style="margin:0;font-size:.95rem">The drawing has zoomed in on the seal you are being asked about; it has a flashing yellow outline. Ask yourself what it touches on each side, and whether those two parts slide past each other while the cylinder moves.</p>';
+  document.querySelector('.fig').scrollIntoView({behavior:'smooth',block:'nearest'});
+  nextQ();
+});
+$('quizStop').addEventListener('click',endQuiz);
+$('quizNext').addEventListener('click',()=>{quiz.i++; nextQ();});
+function endQuiz(){
+  quizUI(false); selected=null; $('quizNext').hidden=true; $('quizStart').textContent='Start again';
+  $('quizFb').className='fb'; $('quizFb').textContent=quiz.i>=quiz.queue.length?`Finished: you scored ${quiz.score} out of ${quiz.queue.length}.`:'';
+  $('quizScore').textContent=''; showIntro();
+}
+function nextQ(){
+  if(quiz.i>=quiz.queue.length){endQuiz(); return;}
+  quiz.cur=quiz.queue[quiz.i]; quiz.answered=false; selected=quiz.cur;
+  $('quizQ').innerHTML=`<b>Question ${quiz.i+1} of ${quiz.queue.length}.</b> Is the seal with the flashing yellow outline static or dynamic?`;
+  $('quizFb').textContent=''; $('quizFb').className='fb'; $('quizNext').hidden=true;
+  document.querySelectorAll('#quizBtns .btn').forEach(b=>b.disabled=false);
+  $('quizScore').textContent=`Score: ${quiz.score}/${quiz.i}`;
+}
+$('quizBtns').addEventListener('click',e=>{
+  const b=e.target.closest('[data-ans]'); if(!b||quiz.answered) return;
+  const s=SEALS[quiz.cur], ok=b.dataset.ans===s.type; quiz.answered=true; if(ok) quiz.score++;
+  $('quizFb').className='fb '+(ok?'ok':'no');
+  const nm=s.name.charAt(0).toLowerCase()+s.name.slice(1), pl=quiz.cur==='piston', ty=s.type==='dyn'?'dynamic':'static';
+  $('quizFb').textContent=`${ok?'Correct!':'Not quite.'} ${pl?'Those are':'That is'} the ${nm}, ${pl?ty+' seals':'a '+ty+' seal'}. ${pl?'They seal':'It seals'} between ${s.between.charAt(0).toLowerCase()+s.between.slice(1)}. ${s.motion}`;
+  document.querySelectorAll('#quizBtns .btn').forEach(x=>x.disabled=true);
+  $('quizScore').textContent=`Score: ${quiz.score}/${quiz.i+1}`;
+  $('quizNext').textContent=quiz.i+1>=quiz.queue.length?'See my score':'Next question'; $('quizNext').hidden=false; $('quizNext').focus();
+});
+
+/* ---------- effects (drips, leak particles, dirt) ---------- */
+const fx=$('fx'), particles=[];
+function spawn(cls,x,y,vx,vy,life,r){const c=document.createElementNS(NS,'circle'); c.setAttribute('class',cls); c.setAttribute('r',r||3); fx.appendChild(c); particles.push({el:c,x,y,vx,vy,life,age:0});}
+const dirt=[]; // local x on rod (mover coords), y offset
+let dirtInside=0, spawnT=0, leakT=0, dripT=0, weepT=0;
+
+/* ---------- animation ---------- */
+let vb=[0,0,1100,440], last=performance.now(), flowOff=0;
+function frame(t){
+  const dt=Math.min((t-last)/1000,0.05); last=t;
+  let speed=0;
+  if(playing){
+    if(hold>0){hold-=dt; if(hold<=0) dir*=-1;}
+    else{
+      const rate=1/(+$('spd').value)*(fail.piston?0.75:1);
+      pos+=dir*rate*dt; speed=rate;
+      if(pos>=1){pos=1; hold=0.6;} if(pos<=0){pos=0; hold=0.6;}
+    }
+    $('pos').value=pos;
+  }
+  const dx=-STROKE*pos;
+  $('mover').setAttribute('transform',`translate(${dx} 0)`);
+  // chambers & ports: extending -> cap side pressurised
+  const ext=dir>0, pL=810+dx, pR=880+dx;
+  $('chRod').setAttribute('width',Math.max(0,pL-445)); $('chCap').setAttribute('x',pR); $('chCap').setAttribute('width',Math.max(0,885-pR));
+  $('chRod').setAttribute('class',ext?'chamber-lp':'chamber-hp'); $('chCap').setAttribute('class',ext?'chamber-hp':'chamber-lp');
+  ['pipeA','passA'].forEach(id=>$(id).setAttribute('class',ext?'pipe-lp':'pipe-hp')); ['pipeB','passB'].forEach(id=>$(id).setAttribute('class',ext?'pipe-hp':'pipe-lp'));
+  $('portALbl').textContent=ext?'Port A: return':'Port A: pressure'; $('portBLbl').textContent=ext?'Port B: pressure':'Port B: return';
+  if(speed>0) flowOff+=dt*60;
+  $('flowA').style.strokeDashoffset=ext?flowOff:-flowOff; $('flowB').style.strokeDashoffset=ext?-flowOff:flowOff;
+  const moving=speed>0;
+  // oil film on rod outside head when rod seal worn
+  $('oilFilm').setAttribute('width',fail.rodseal?Math.max(0,330-dx-260):0);
+  // worn piston seals: bypass particles across the piston edge, from pressure side to return side
+  if(fail.piston){leakT-=dt; if(leakT<=0){leakT=0.08; const yTop=Math.random()<0.5; const y=yTop?113:327;
+    if(ext) spawn('leakp',pR,y,-90,0,70/90); else spawn('leakp',pL,y,90,0,70/90);}}
+  // worn rod seal: drips at the head face
+  if(fail.rodseal&&(moving||Math.random()<0.02)){dripT-=dt; if(dripT<=0){dripT=0.35; spawn('drop',328,254,-6,0,1.6,3.2);}}
+  // failed O-ring: weeps at joint
+  if(fail.oringHead){weepT-=dt; if(weepT<=0){weepT=0.7; spawn('drop',432,346,0,0,1.6,3);}}
+  // dirt on the exposed rod
+  spawnT-=dt;
+  const exposed=330-(260+dx); // length of rod outside the head (world x from 260+dx to 330)
+  if(exposed>40&&spawnT<=0&&dirt.length<14){spawnT=0.25; const wx=260+dx+8+Math.random()*(exposed-20); const c=document.createElementNS(NS,'circle'); c.setAttribute('class','dirt'); c.setAttribute('r',2.6); $('dirtLocal').appendChild(c); const top=Math.random()<0.5; dirt.push({lx:wx-dx,y:top?187:253,el:c});}
+  for(let i=dirt.length-1;i>=0;i--){const d=dirt[i], wx=d.lx+dx;
+    d.el.setAttribute('cx',d.lx); d.el.setAttribute('cy',d.y);
+    if(wx>=331&&wx<345){
+      if(!fail.wiper){spawn('dirt',wx-2,d.y,-10,0,1.2,2.6); d.el.remove(); dirt.splice(i,1); continue;}
+    }
+    if(wx>425){d.el.remove(); dirt.splice(i,1); dirtInside++; continue;}
+  }
+  // particles
+  for(let i=particles.length-1;i>=0;i--){const p=particles[i]; p.age+=dt;
+    if(p.el.classList.contains('drop')||p.el.classList.contains('dirt')) p.vy+=420*dt;
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.el.setAttribute('cx',p.x); p.el.setAttribute('cy',p.y);
+    if(p.age>p.life||p.y>440){p.el.remove(); particles.splice(i,1);}}
+  // selection ring
+  const ring=$('selRing');
+  if(selected){const b=SEALS[selected].box, ox=SEALS[selected].moves?dx:0;
+    ring.style.display=''; ring.setAttribute('x',b[0]+ox); ring.setAttribute('y',b[1]); ring.setAttribute('width',b[2]); ring.setAttribute('height',b[3]);}
+  else ring.style.display='none';
+  // zoom
+  let target=[0,0,1100,440];
+  if(($('zoom').checked||quiz.active)&&selected){const b=SEALS[selected].box, ox=SEALS[selected].moves?dx:0, cx=b[0]+ox+b[2]/2, cy=b[1]+b[3]/2, w=Math.max(260,b[2]*3.2), h=w*0.4;
+    target=[cx-w/2,Math.max(-20,cy-h/2),w,h];}
+  for(let k=0;k<4;k++) vb[k]+=(target[k]-vb[k])*0.12;
+  $('cyl').setAttribute('viewBox',vb.map(v=>v.toFixed(1)).join(' '));
+  if(fail.wiper&&dirtInside>0){const li=document.getElementById('dirtCount'); const txt=`Dirt particles pulled inside so far: ${dirtInside}`;
+    if(li) li.textContent=txt; else {const n=document.createElement('li'); n.id='dirtCount'; n.textContent=txt; $('symptoms').appendChild(n);}}
+  if(window.render3D) window.render3D({dt,pos,ext,moving,selected,fail,zoom:$('zoom').checked||quiz.active});
+  requestAnimationFrame(frame);
+}
+window.selectSeal=k=>{if(!quiz.active) select(k);};
+requestAnimationFrame(frame);
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const box=$('v3d');
+let ready=false, active=false;
+let renderer,scene,camera,root,mover,rodCh,capCh,M,sealGroups={},sealMeshes=[],labs={},portA,portB,particles=[],dirt=[],last=0;
+const PHL=Math.PI*1.5, CX=66, STROKE=33;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- view toggle ---------- */
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
+  const three=b.dataset.mode==='3d';
+  document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('cyl').style.display=three?'none':''; box.hidden=!three; active=three;
+  if(three&&!ready) init();
+  if(three) resize();
+}));
+
+function lathe(profile,mat,capMat){
+  const g=new THREE.Group();
+  const pts=profile.map(p=>new THREE.Vector2(p[0],p[1])); pts.push(pts[0].clone());
+  g.add(new THREE.Mesh(new THREE.LatheGeometry(pts,96,0,PHL),mat));
+  const sg=new THREE.ShapeGeometry(new THREE.Shape(profile.map(p=>new THREE.Vector2(p[0],p[1]))));
+  const c1=new THREE.Mesh(sg,capMat||mat); c1.rotation.y=-Math.PI/2; g.add(c1);
+  const c2=new THREE.Mesh(sg,capMat||mat); c2.rotation.y=PHL-Math.PI/2; g.add(c2);
+  return g;
+}
+const circ=(r0,a0,rad,n=20)=>Array.from({length:n},(_,i)=>[r0+rad*Math.cos(i/n*2*Math.PI),a0+rad*Math.sin(i/n*2*Math.PI)]);
+const SEAL_AT={ // label anchor [r,a], moves with piston?
+  wiper:[3.7,33.7,0],rodseal:[3.7,36.2,0],packing:[3.7,39.6,0],oringHead:[10.65,43.75,0],oringCap:[10.65,89.25,0],piston:[10.6,84.5,1],pistonRod:[3.3,81.55,1]};
+
+function init(){
+  ready=true;
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  box.appendChild(renderer.domElement);
+  renderer.domElement.tabIndex=0;
+  renderer.domElement.setAttribute('aria-label','3D cutaway of the cylinder. Drag to rotate, scroll to zoom, click a seal to select it. Arrow keys rotate.');
+  scene=new THREE.Scene();
+  camera=new THREE.PerspectiveCamera(32,2,0.1,1000);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x606870,0.8));
+  const k=new THREE.DirectionalLight(0xffffff,0.75); k.position.set(30,60,80); scene.add(k);
+  const f=new THREE.DirectionalLight(0xffffff,0.3); f.position.set(-60,-20,-40); scene.add(f);
+  const std=(o)=>new THREE.MeshStandardMaterial(Object.assign({side:THREE.DoubleSide,metalness:.35,roughness:.5},o));
+  M={steel:std({}),cut:std({metalness:.1,roughness:.8}),rod:std({metalness:.75,roughness:.22}),thread:std({metalness:.5,roughness:.5}),
+     dark:std({metalness:.2,roughness:.6}),hp:std({transparent:true,opacity:.5,depthWrite:false,roughness:.8}),lp:std({transparent:true,opacity:.4,depthWrite:false,roughness:.8}),
+     portA:std({}),portB:std({}),drop:std({roughness:.3}),leak:std({}),dirt:std({roughness:.9})};
+  root=new THREE.Group(); root.rotation.z=-Math.PI/2; root.position.x=-CX; scene.add(root);
+  // head
+  root.add(lathe([[4.4,33],[14,33],[14,43],[11,43],[11,43.3],[10.3,43.3],[10.3,44.2],[11,44.2],[11,44.5],[3.2,44.5],[3.2,41.2],[4.4,41.2],[4.4,38],[3.2,38],[3.2,37.1],[4.4,37.1],[4.4,35.4],[3.2,35.4],[3.2,34.4],[4.4,34.4]],M.steel,M.cut));
+  // barrel
+  root.add(lathe([[11,43],[12.4,43],[12.4,90],[11,90]],M.steel,M.cut));
+  // cap
+  root.add(lathe([[0,88.5],[11,88.5],[11,88.8],[10.3,88.8],[10.3,89.7],[11,89.7],[11,90],[14,90],[14,100],[0,100]],M.steel,M.cut));
+  // tie rods (skip the one in the cut-away quarter)
+  [[11,11],[11,-11],[-11,-11]].forEach(([x,z])=>{const t=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,72,16),M.dark); t.position.set(x*1.42,66,z*1.42); root.add(t);
+    [31.5,100.5].forEach(a=>{const n=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.1,2,6),M.dark); n.position.set(x*1.42,a,z*1.42); root.add(n);});});
+  // ports (on top: local -x)
+  const mkPort=(a,mat)=>{const g=new THREE.Group(); const o=new THREE.Mesh(new THREE.CylinderGeometry(1.8,1.8,5,24),M.steel); const i=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.1,5.1,24),mat);
+    g.add(o,i); g.rotation.z=Math.PI/2; g.position.set(-16.3,a,0); root.add(g); return g;};
+  portA=mkPort(39,M.portA); portB=mkPort(95,M.portB);
+  // chambers (unit length, scaled each frame)
+  rodCh=lathe([[3.05,0],[10.95,0],[10.95,1],[3.05,1]],M.lp); root.add(rodCh);
+  capCh=lathe([[0,0],[10.95,0],[10.95,1],[0,1]],M.hp); root.add(capCh);
+  // mover: rod, piston, piston seals
+  mover=new THREE.Group(); root.add(mover);
+  const rod=new THREE.Mesh(new THREE.CylinderGeometry(3,3,55,48),M.rod); rod.position.y=30+27.5; mover.add(rod);
+  const thr=new THREE.Mesh(new THREE.CylinderGeometry(2.85,2.85,4,32),M.thread); thr.position.y=28; mover.add(thr);
+  for(let a=32;a<80;a+=2.2){const r=new THREE.Mesh(new THREE.CylinderGeometry(3.03,3.03,.12,32),M.dark); r.position.y=a; mover.add(r);}
+  mover.add(lathe([[3.6,81],[10.95,81],[10.95,82.1],[10.2,82.1],[10.2,83.6],[10.95,83.6],[10.95,85.3],[10.2,85.3],[10.2,86.8],[10.95,86.8],[10.95,88],[3,88],[3,82.1],[3.6,82.1]],M.steel,M.cut));
+  const rodIn=new THREE.Mesh(new THREE.CylinderGeometry(2.98,2.98,7,32),M.rod); rodIn.position.y=84.5; mover.add(rodIn);
+  // bore tick marks on the cut face of the barrel (fixed)
+  for(let a=46;a<88;a+=2.5){const b=new THREE.Mesh(new THREE.BoxGeometry(.7,.12,.12),M.dark); b.position.set(-11.4,a,0.06); root.add(b);}
+  // seals
+  const sealMat=(t)=>new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:.6,metalness:0,color:css(t==='dyn'?'--dyn':'--stat'),emissive:0x000000});
+  const addSeal=(id,type,profiles,parent)=>{const g=new THREE.Group(); const m=sealMat(type); g.userData={id,type,mat:m};
+    profiles.forEach(p=>{const l=lathe(p,m); g.add(l);}); g.traverse(o=>{if(o.isMesh){o.userData.id=id; sealMeshes.push(o);}}); parent.add(g); sealGroups[id]=g;};
+  addSeal('wiper','dyn',[[[3.0,33.1],[4.35,33.1],[4.35,34.35],[3.2,34.35],[3.0,33.7]]],root);
+  addSeal('rodseal','dyn',[[[3.0,35.5],[4.35,35.5],[4.35,37.0],[4.0,37.0],[4.0,36.1],[3.5,36.1],[3.5,37.0],[3.0,37.0]]],root);
+  addSeal('packing','dyn',[38.1,39.1,40.1].map(a0=>[[3.0,a0],[3.7,a0+0.5],[4.35,a0],[4.35,a0+0.5],[3.7,a0+1.0],[3.0,a0+0.5]]),root);
+  addSeal('oringHead','stat',[circ(10.65,43.75,.36)],root);
+  addSeal('oringCap','stat',[circ(10.65,89.25,.36)],root);
+  addSeal('piston','dyn',[[[10.25,82.2],[11,82.2],[11,83.5],[10.25,83.5]],[[10.25,85.4],[11,85.4],[11,86.7],[10.25,86.7]]],mover);
+  addSeal('pistonRod','stat',[circ(3.32,81.55,.3)],mover);
+  // labels
+  const names={wiper:'Rod wiper',rodseal:'Rod seal',packing:'Rod packing',oringHead:'O-ring',oringCap:'O-ring',piston:'Piston seals',pistonRod:'Piston–rod O-ring'};
+  for(const id in SEAL_AT){const d=document.createElement('div'); d.className='lab3 '+(sealGroups[id].userData.type); d.textContent=names[id]; box.appendChild(d); labs[id]=d;}
+  ['Head','Barrel','Cap','Piston','Rod','Port A','Port B'].forEach(n=>{const d=document.createElement('div'); d.className='lab3 part'; d.textContent=n; box.appendChild(d); labs[n]=d;});
+  applyColors();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyColors);
+  setupOrbit();
+  new ResizeObserver(resize).observe(box); resize();
+}
+function applyColors(){
+  scene.background=new THREE.Color(css('--scene'));
+  M.steel.color.set(css('--steel')); M.cut.color.set(css('--steel-light')); M.rod.color.set(css('--rod'));
+  M.thread.color.set(css('--steel-dark')); M.dark.color.set(css('--steel-dark'));
+  M.hp.color.set(css('--hp')); M.lp.color.set(css('--lp')); M.drop.color.set(css('--oilfilm')); M.leak.color.set(css('--hp')); M.dirt.color.set(css('--dirt'));
+  for(const id in sealGroups) sealGroups[id].userData.mat.color.set(css(sealGroups[id].userData.type==='dyn'?'--dyn':'--stat'));
+}
+function resize(){ if(!ready) return; const w=box.clientWidth,h=box.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();}
+
+/* ---------- orbit ---------- */
+const cam={az:0.55,el:0.38,dist:150,taz:0.55,tel:0.38,tdist:150,tx:0,ty:0,tz:0};
+const VIEWS={persp:[0.55,0.38],front:[0,0],top:[0.0001,Math.PI/2-0.01],end:[-Math.PI/2+0.25,0.15]};
+function setView(v){cam.taz=VIEWS[v][0]; cam.tel=VIEWS[v][1]; document.querySelectorAll('[data-v3]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v3===v));}
+document.querySelectorAll('[data-v3]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v3)));
+const clearView=()=>document.querySelectorAll('[data-v3]').forEach(b=>b.setAttribute('aria-pressed','false'));
+function setupOrbit(){
+  const el=renderer.domElement, pts=new Map(); let down=null, pinch=null;
+  el.addEventListener('pointerdown',e=>{el.setPointerCapture(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); down={x:e.clientX,y:e.clientY,moved:0};});
+  el.addEventListener('pointermove',e=>{ if(!pts.has(e.pointerId)) return; const p=pts.get(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size===2){const [a,b]=[...pts.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); if(pinch) cam.tdist=Math.min(400,Math.max(25,cam.tdist*pinch/d)); pinch=d; if(down) down.moved=99; return;}
+    const dx=e.clientX-p.x, dy=e.clientY-p.y; if(down) down.moved+=Math.abs(dx)+Math.abs(dy);
+    cam.taz-=dx*0.008; cam.tel=Math.max(-1.5,Math.min(1.55,cam.tel+dy*0.008)); if(Math.abs(dx)+Math.abs(dy)>1) clearView();});
+  const up=e=>{pts.delete(e.pointerId); if(pts.size<2) pinch=null;
+    if(down&&down.moved<6&&e.type==='pointerup'){ // click: pick a seal
+      const r=el.getBoundingClientRect(), v=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
+      const rc=new THREE.Raycaster(); rc.setFromCamera(v,camera); const hit=rc.intersectObjects(sealMeshes,false)[0];
+      if(hit&&window.selectSeal) window.selectSeal(hit.object.userData.id);}
+    down=null;};
+  el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up);
+  el.addEventListener('wheel',e=>{e.preventDefault(); cam.tdist=Math.min(400,Math.max(25,cam.tdist*(1+Math.sign(e.deltaY)*0.1)));},{passive:false});
+  el.addEventListener('keydown',e=>{const k=e.key; let u=true;
+    if(k==='ArrowLeft') cam.taz+=0.1; else if(k==='ArrowRight') cam.taz-=0.1; else if(k==='ArrowUp') cam.tel=Math.min(1.55,cam.tel+0.1); else if(k==='ArrowDown') cam.tel=Math.max(-1.5,cam.tel-0.1);
+    else if(k==='+'||k==='=') cam.tdist*=0.9; else if(k==='-') cam.tdist*=1.1; else u=false; if(u){e.preventDefault(); clearView();}});
+}
+
+/* ---------- helpers ---------- */
+const W=(r,a,phi,moveA)=>{ // lathe-local point -> world
+  const v=new THREE.Vector3(r*Math.sin(phi),a+(moveA||0),r*Math.cos(phi)); return root.localToWorld(v);};
+function place(el,v){const p=v.clone().project(camera);
+  if(p.z>1||p.z<-1||box.classList.contains('nolabels')){el.style.display='none'; return;}
+  el.style.display=''; el.style.transform=`translate(${(p.x+1)/2*box.clientWidth}px,${(1-p.y)/2*box.clientHeight}px) translate(-50%,-50%)`;}
+function spawn(mat,pos,vel,life,size){const m=new THREE.Mesh(new THREE.SphereGeometry(size||.35,10,8),mat); m.position.copy(pos); scene.add(m); particles.push({m,v:vel,life,age:0,g:mat!==M.leak});}
+
+/* ---------- per-frame update (called by the main loop) ---------- */
+let dripT=0, weepT=0, leakT=0, dirtT=0;
+window.render3D=function(st){
+  if(!active||!ready) return;
+  const dt=st.dt, dA=-STROKE*st.pos, ext=st.ext;
+  mover.position.y=dA;
+  const front=81+dA, back=88+dA;
+  rodCh.position.y=44.5; rodCh.scale.y=Math.max(0.01,front-44.5);
+  capCh.position.y=back; capCh.scale.y=Math.max(0.01,88.5-back);
+  const setMat=(g,m)=>g.traverse(o=>{if(o.isMesh) o.material=m;});
+  setMat(rodCh,ext?M.lp:M.hp); setMat(capCh,ext?M.hp:M.lp);
+  M.portA.color.set(css(ext?'--lp':'--hp')); M.portB.color.set(css(ext?'--hp':'--lp'));
+  // seal states and highlight
+  const pulse=0.35+0.35*Math.sin(performance.now()/180);
+  for(const id in sealGroups){const g=sealGroups[id], m=g.userData.mat;
+    const worn=st.fail[id]&&id!=='wiper'; g.visible=!(id==='wiper'&&st.fail.wiper);
+    m.color.set(worn?css('--muted'):css(g.userData.type==='dyn'?'--dyn':'--stat'));
+    m.emissive.set(id===st.selected?css('--accent'):'#000000'); m.emissiveIntensity=id===st.selected?pulse:0;}
+  // effects
+  if(st.fail.rodseal){dripT-=dt; if(dripT<=0){dripT=0.4; spawn(M.drop,W(3.2,32.6,Math.PI*0.9),new THREE.Vector3(0,0,0),1.4,.45);}}
+  if(st.fail.oringHead){weepT-=dt; if(weepT<=0){weepT=0.8; spawn(M.drop,W(12.5,43,Math.PI*0.75),new THREE.Vector3(0,0,0),1.4,.45);}}
+  if(st.fail.piston&&st.moving){leakT-=dt; if(leakT<=0){leakT=0.07; const p=W(10.98,ext?back:front,PHL-0.05);
+    const dir=root.localToWorld(new THREE.Vector3(0,ext?-1:1,0)).sub(root.localToWorld(new THREE.Vector3())).multiplyScalar(9);
+    spawn(M.leak,p,dir,0.75,.3);}}
+  // dirt on exposed rod (rod-local a), scraped at the wiper unless it is missing
+  dirtT-=dt; const exposedFrom=26+dA+1, exposedTo=33;
+  if(exposedTo-exposedFrom>3&&dirtT<=0&&dirt.length<16){dirtT=0.3; const a=exposedFrom+Math.random()*(exposedTo-exposedFrom-1);
+    const phi=PHL*(0.55+Math.random()*0.4); const m=new THREE.Mesh(new THREE.SphereGeometry(.28,8,6),M.dirt); scene.add(m); dirt.push({la:a-dA,phi,m});}
+  for(let i=dirt.length-1;i>=0;i--){const d=dirt[i], a=d.la+dA; d.m.position.copy(W(3.15,a,d.phi));
+    if(a>=33&&a<33.6&&!st.fail.wiper){spawn(M.dirt,d.m.position.clone(),new THREE.Vector3(0,0,0),1,.28); scene.remove(d.m); d.m.geometry.dispose(); dirt.splice(i,1); continue;}
+    if(a>44){scene.remove(d.m); d.m.geometry.dispose(); dirt.splice(i,1);}}
+  for(let i=particles.length-1;i>=0;i--){const p=particles[i]; p.age+=dt; if(p.g) p.v.y-=60*dt; p.m.position.addScaledVector(p.v,dt);
+    if(p.age>p.life){scene.remove(p.m); p.m.geometry.dispose(); particles.splice(i,1);}}
+  // camera: zoom follows the selected seal
+  let tgt=new THREE.Vector3(0,0,0), tdist=cam.tdist;
+  if(st.zoom&&st.selected){const s=SEAL_AT[st.selected]; tgt=W(s[0],s[1],PHL,s[2]?dA:0); tdist=Math.min(cam.tdist,40);}
+  cam.tx+=(tgt.x-cam.tx)*0.1; cam.ty+=(tgt.y-cam.ty)*0.1; cam.tz+=(tgt.z-cam.tz)*0.1;
+  cam.az+=(cam.taz-cam.az)*0.12; cam.el+=(cam.tel-cam.el)*0.12; cam.dist+=(tdist-cam.dist)*0.12;
+  camera.position.set(cam.tx+cam.dist*Math.cos(cam.el)*Math.sin(cam.az),cam.ty+cam.dist*Math.sin(cam.el),cam.tz+cam.dist*Math.cos(cam.el)*Math.cos(cam.az));
+  camera.up.set(0,1,0); if(Math.abs(cam.el)>1.5) camera.up.set(0,0,-1);
+  camera.lookAt(cam.tx,cam.ty,cam.tz);
+  renderer.render(scene,camera);
+  // labels on the cut face that faces the viewer
+  for(const id in SEAL_AT){const s=SEAL_AT[id]; place(labs[id],W(s[0]+(id==='piston'||id.startsWith('oring')?2.6:-0.2),s[1],PHL,s[2]?dA:0).add(new THREE.Vector3(0,id==='wiper'||id==='rodseal'||id==='packing'?0:0,0)));}
+  labs.rodseal.style.marginTop='-16px'; labs.packing.style.marginTop='16px'; labs.wiper.style.marginTop='0';
+  place(labs['Head'],W(14.8,36,PHL*0.6)); place(labs['Barrel'],W(13.2,66,PHL*0.62)); place(labs['Cap'],W(14.8,96,PHL*0.6));
+  place(labs['Piston'],W(7,84.5,PHL,dA)); place(labs['Rod'],W(3,60,PHL*0.55,dA));
+  place(labs['Port A'],W(19.5,39,PHL)); place(labs['Port B'],W(19.5,95,PHL));
+  labs['Port A'].textContent=ext?'Port A: return':'Port A: pressure'; labs['Port B'].textContent=ext?'Port B: pressure':'Port B: return';
+};
+})();
+
+</script>
+</body>
+</html>
