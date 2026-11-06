@@ -35,6 +35,10 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
 .wrap{max-width:1280px;margin:0 auto;padding:28px 20px 60px}
+.sitenav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.sitenav a{border:1px solid var(--steel-dark);color:var(--ink);text-decoration:none;font:500 .92rem var(--sans);padding:6px 12px;border-radius:4px;background:var(--panel)}
+.sitenav a:hover{background:var(--steel-light)}
+.sitenav a[aria-current="page"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 32px;margin-bottom:20px;border-bottom:2px solid var(--ink);padding-bottom:14px}
 h1{font-family:var(--cond);font-weight:600;font-size:clamp(2rem,4.6vw,3.2rem);line-height:1;margin:0}
 .rule{font-family:var(--cond);font-size:clamp(1.1rem,2.1vw,1.45rem);font-weight:500;margin:0;max-width:34ch}
@@ -138,8 +142,8 @@ th{color:var(--muted);font-weight:600}
 </head>
 <body>
 <div class="wrap" id="app">
+<nav class="sitenav" aria-label="Site"><a href="index.html">Cylinder types</a><a href="seals.html" aria-current="page">Cylinder seals</a><a href="mounting.html">Cylinder mounts</a></nav>
 <header>
-  <p style="margin:0 0 6px"><a href="index.html" style="color:var(--ink);font-weight:600">← All cylinder types</a></p>
   <h1>Seals in a hydraulic cylinder</h1>
   <p class="rule">A seal is <span class="d">dynamic</span> when the surfaces it seals between slide past each other, and <span class="s">static</span> when they don’t.</p>
 </header>

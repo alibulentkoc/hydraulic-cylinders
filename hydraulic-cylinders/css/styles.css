@@ -26,6 +26,10 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
 .wrap{max-width:1360px;margin:0 auto;padding:24px 20px 60px}
+.sitenav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.sitenav a{border:1px solid var(--steel-dark);color:var(--ink);text-decoration:none;font:500 .92rem var(--sans);padding:6px 12px;border-radius:4px;background:var(--panel)}
+.sitenav a:hover{background:var(--steel-light)}
+.sitenav a[aria-current="page"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 28px;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
 h1{font-family:var(--cond);font-weight:600;font-size:clamp(1.9rem,4.2vw,3rem);line-height:1;margin:0}
 .sub{margin:4px 0 0;color:var(--muted)}
