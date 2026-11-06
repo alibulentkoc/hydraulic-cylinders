@@ -12,11 +12,12 @@ Cylinder types included:
 - Telescoping ram
 - Stop tube (with and without)
 - Seals: static and dynamic (separate page, `seals.html`)
+- Mounting methods: lug, flange, flush side, extended tie rod, clevis and trunnion (separate page, `mounting.html`)
 
 ## Publish on GitHub Pages
 
 1. Create a new repository on GitHub (for example `hydraulic-cylinders`).
-2. Upload everything in this folder, keeping the folder structure (`index.html`, `seals.html`, `css/`, `js/`).
+2. Upload everything in this folder, keeping the folder structure (`index.html`, `seals.html`, `mounting.html`, `css/`, `js/`).
 3. In the repository go to **Settings → Pages**. Under **Build and deployment**, choose **Deploy from a branch**, pick `main` and `/ (root)`, then **Save**.
 4. After a minute the site is live at `https://<your-user-name>.github.io/<repository-name>/`.
 
@@ -34,6 +35,7 @@ The site loads three.js and Google Fonts from public CDNs, so it needs an intern
 | `js/engine.js` | Draws the 2D section (SVG) and the 3D cutaway (three.js) from the same geometry |
 | `js/app.js` | Type list, controls, animation loop, units and calculator |
 | `seals.html` | Stand-alone static and dynamic seals simulator |
+| `mounting.html` | Mounting methods in 3D, with force arrows and a swinging-lever demo for pivot mounts |
 
 ## Adding a new cylinder type
 

@@ -29,6 +29,9 @@
   const li = document.createElement('li');
   li.innerHTML = '<a class="typebtn" href="seals.html"><svg viewBox="0 0 220 90" aria-hidden="true"><rect x="30" y="20" width="120" height="40"/><circle cx="60" cy="20" r="6"/><circle cx="60" cy="60" r="6"/></svg><span>Seals: static and dynamic</span></a>';
   ul.appendChild(li);
+  const li2 = document.createElement('li');
+  li2.innerHTML = '<a class="typebtn" href="mounting.html"><svg viewBox="0 0 220 90" aria-hidden="true"><rect x="50" y="20" width="120" height="40"/><rect x="30" y="10" width="20" height="60"/></svg><span>Mounting methods</span></a>';
+  ul.appendChild(li2);
   ul.addEventListener('click', e => { const b = e.target.closest('[data-type]'); if (b) { location.hash = b.dataset.type; } });
   window.addEventListener('hashchange', () => select(location.hash.slice(1)));
 
